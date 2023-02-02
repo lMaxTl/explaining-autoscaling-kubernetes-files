@@ -108,6 +108,7 @@ kubectl create -f .
 cd ..
 ```
 
+
 ### Setup the HPA Config for t2store
 These are example configurations derived by Tobias Rodestock and are used to scale the t2store microservice system.
 
@@ -132,3 +133,23 @@ cd .\ba_frontend\
 kubectl create -f .
 ```
 
+## Generating Events
+You can generate load manually accessing the UI or the UIBackend’s Swagger-UI.
+Or you can use a Load Generator to send request. We recommend [Apache JMeter](https://jmeter.apache.org/) for this purpose.
+
+### Apache JMeter
+To run the T2-Project with the JMeter Load Generator, do the following :
+* Deploy the T2-Project
+* Get JMeter
+* Get a load profile and run the load generator
+
+The load profiles can be found in the following repository: [t2-project-kube](https://github.com/t2-project/kube.git) in the folder kube/loadprofiles
+The repository is most likely already cloned if you followed the instructions above.
+
+```bash
+#Forward the service
+kubectl port-forward svc/uibackend-cs 8081:80
+
+#Send load to service
+java -jar .\apache-jmeter\bin\ApacheJMeter.jar -t .\kube\loadprofiles\t2-store-random-infinite.jmx -Jhostname localhost -Jport 8081 -JrampUp 1 -l logfile.log -n
+```
