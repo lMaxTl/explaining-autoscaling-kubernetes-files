@@ -4,13 +4,17 @@ The repositories are organized in the following way:
 - [explaining-autoscaling-frontend](https://github.com/lMaxTl/explaining-autoscaling-frontend)
 - [explaining-autoscaling-backend](https://github.com/lMaxTl/explaining-autoscaling-backend)
 - [explaining-autoscaling-backend-documentation](https://lmaxtl.github.io/documentation/ba-backend/overview.html)
+- [explaining-autoscaling-kubernetes-files](https://github.com/lMaxTl/explaining-autosclaing-kubernetes-files)
 
 EXPA is a tool that addresses the problem of lack of clear explanations for autoscaling behaviour in self-adaptive microservice systems. Traditional manual monitoring of such systems is time consuming, costly and can lead to long runtime interruptions. To meet the demand for automation, self-adaptive systems have become the industry standard. However, this also results in a lack of clear explanations for adaptation decisions, making it difficult to debug and verify the behaviour of these systems. EXPA aims to solve this problem by providing explanations for adaptation decisions in Kubernetes clusters, reducing the cost of ownership and increasing resilience.
 
-## explaining-autoscaling-frontend
-This repository contains the frontend of the project. It is a React application that is used to visualize the autoscaling behavior of the microservice system. The frontend is connected to the backend via a rest api connection. The frontend is deployed as a docker container on a Kubernetes cluster.
+Here is an overview of the architecture of the project:
+![Architecture](images/Architekturdiagramm.png)
 
-The interesting code files are located in the following folders:
+## explaining-autoscaling-frontend
+This repository contains the frontend of the project. It is a React application that visualizes the autoscaling behavior of the microservice system. The frontend is connected to the backend via a REST API connection. The frontend is deployed as a docker container on a Kubernetes cluster.
+
+Code files in the scope of this review are located in the following folders:
  - components/ - contains the ui elements of the frontend
     - components/Cards/TabbableCard - contains the card that is used to display the metrics
     - components/DependencyGraph - contains the graph that is used to display the dependency graph
@@ -24,14 +28,14 @@ The interesting code files are located in the following folders:
     - components/Timelines - contains the timeline with and without metric information
     - components/Titles - contains a dynamic title component
  - helpers/
-    - helpers/DataCollection - contains the code that is used to collect the data from the backend
+    - helpers/DataCollection - contains the code that collects the data from the backend
     - helpers/DataManipulation - contains the code that is used to manipulate the data
     - helper/Types - contains the typescript types
  - pages/ - contains the pages of the frontend
 
 ## explaining-autoscaling-backend
-This repository contains the backend of the project. It is a node.js application that is used to collect the metrics of the microservice system. The backend is deployed as a docker container on a Kubernetes cluster.
-The project extends on the work of Tobias Rodestock. His work includes the following folders and are not part of the code review:
+This repository contains the backend of the project. It is a node.js application that collects the metrics of the microservice system. The backend is deployed as a docker container on a Kubernetes cluster.
+The project extends the work of Tobias Rodestock. His work includes the following folders and are not part of the code review:
  - event-set/*
  - derivative/*
  - events.service.ts (partly, only consider receiveNewAdaptionEvent() and getAllMetricValues())
@@ -78,6 +82,14 @@ helm install prometheus prometheus-community/kube-prometheus-stack -f ./promethe
 helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter -f ./prometheus-blackbox-exporter-values.yaml
 ```
 
+## Get the Kubernetes YAML files
+The Kubernetes YAML files are located in the following repository: [explaining-autoscaling-kubernetes-files](https://github.com/lMaxTl/explaining-autosclaing-kubernetes-files)
+To get the files, you can either clone the repository or download the files as a zip file.
+
+```bash	
+git clone https://github.com/lMaxTl/explaining-autosclaing-kubernetes-files.git
+```
+
 ### Setup the Custom Metric Server
 The custom metric server is required so that the Horizontal Pod Autoscaler can retrieve metrics from Prometheus. The custom metric server is deployed as a docker container on the Kubernetes cluster.
 
@@ -106,7 +118,7 @@ cd ..
 ```
 
 ### Setup the EXPA backend
-Sometimes the backend errors and cant reach the promehteus service and is fixed by running minikube dashboard for some reason
+Sometimes the backend errors and cant reach the prometheus service and is fixed by running minikube dashboard for some reason
 
 ```bash	
 cd .\ba_backend\
