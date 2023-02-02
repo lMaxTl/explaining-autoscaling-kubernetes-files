@@ -1,0 +1,69 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cart
+  annotations:
+    # This annotation is optional.
+    # If specified, then this prometheus server is used,
+    # instead of the prometheus server specified as the CLI argument `--prometheus-server`.
+    # metric-config.<metricType>.<metricName>.<collectorType>/<configKey>
+    metric-config.external.tomatocputomato.prometheus/query: |
+      sum(rate(container_cpu_usage_seconds_total{namespace="default", pod=~"cart-.*"}[1m]))
+    metric-config.tomatocputomato.prometheus/interval: "15s" # optional
+    metric-config.external.tomatoerrortomato.prometheus/query: |
+      rate(http_server_requests_seconds_count{application="cart", status='500'}[1m]) or on() vector(0)
+    metric-config.tomatoerrortomato.prometheus/interval: "15s" # optional
+    metric-config.external.tomatotraffictomato.prometheus/query: |
+      sum(rate( http_server_requests_seconds_count{application='cart'}[1m]))
+    metric-config.tomatotraffictomato.prometheus/interval: "15s" # optional
+    metric-config.external.tomatolatencytomato.prometheus/query: |
+      sum(rate(http_server_requests_seconds_sum{application="cart"}[1m]))/sum(rate(http_server_requests_seconds_count{application="cart"}[1m]))
+    metric-config.tomatolatencytomato.prometheus/interval: "15s" # optional
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cart
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: tomatocputomato
+        selector:
+          matchLabels:
+            type: prometheus
+      target:
+        type: AverageValue
+        averageValue: "0.150"
+  - type: External
+    external:
+      metric:
+        name: tomatolatencytomato
+        selector:
+          matchLabels:
+            type: prometheus
+      target:
+        type: AverageValue
+        averageValue: "0.150"
+  - type: External
+    external:
+      metric:
+        name: tomatoerrortomato
+        selector:
+          matchLabels:
+            type: prometheus
+      target:
+        type: AverageValue
+        averageValue: "5"
+  - type: External
+    external:
+      metric:
+        name: tomatotraffictomato
+        selector:
+          matchLabels:
+            type: prometheus
+      target:
+        type: AverageValue
+        averageValue: "5"
