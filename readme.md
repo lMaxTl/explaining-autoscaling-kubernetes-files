@@ -60,27 +60,8 @@ minikube start --memory 8192 --cpus 6 --extra-config=kubelet.housekeeping-interv
 It is important to check that the housekeeping-interval is set to 10s. Otherwise, the metrics-server will not work properly.
 
 ### Setup dependencies
-This project is closely linked to the t2-project. Therefore, the t2-project needs to be setup first. The t2-project can be found [here](https://github.com/t2-project)
-
-```bash	
-# Add Databases
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
-helm install mongo --set auth.enabled=false bitnami/mongodb
-helm install kafka bitnami/kafka
-# Deploy T2Store
-git clone https://github.com/t2-project/kube.git
-cd kube/k8
-kubectl create -f .
-# add repo for prometheus
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-
-# install charts
-cd ..
-cd prometheusfiles
-helm install prometheus prometheus-community/kube-prometheus-stack -f ./prometheus-operator-values.yaml
-helm install blackbox-exporter prometheus-community/prometheus-blackbox-exporter -f ./prometheus-blackbox-exporter-values.yaml
-```
+This project is closely linked to the t2-project. Therefore, the t2-project needs to be setup first. The t2-project can be found [here](https://github.com/t2-project).
+To set the t2-project up, follow the instructions provided on the t2-project documentation page that can be found [here](https://t2-documentation.readthedocs.io/en/latest/guides/deploy.html)
 
 ## Get the Kubernetes YAML files
 The Kubernetes YAML files are located in the following repository: [explaining-autoscaling-kubernetes-files](https://github.com/lMaxTl/explaining-autosclaing-kubernetes-files)
@@ -131,6 +112,12 @@ cd ..
 ```bash	
 cd .\ba_frontend\
 kubectl create -f .
+```
+## Accessing the frontend
+To access the frontend, you need to forward the service to your local machine. The following command forwards the service to port 9001.
+
+```bash
+kubectl port-forward svc/ba-frontend 9001:9001
 ```
 
 ## Generating Events
