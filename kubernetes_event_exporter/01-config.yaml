@@ -13,7 +13,7 @@ data:
     receivers:
       - name: "event"
         webhook:
-          endpoint: "http://ba.default.svc.cluster.local:3000/events"
+          endpoint: "http://expa-backend.default.svc.cluster.local:3000/events"
           headers:
             User-Agent: "kube-event-exporter"
           streamName: "adaptionEvent"

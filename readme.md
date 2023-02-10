@@ -103,14 +103,14 @@ cd ..
 Sometimes the backend errors and cant reach the prometheus service and is fixed by running minikube dashboard for some reason
 
 ```bash	
-cd .\ba_backend\
+cd .\expa_backend\
 kubectl create -f .
 cd ..
 ```
 
 ### Setup the EXPA frontend
 ```bash	
-cd .\ba_frontend\
+cd .\expa_backend_frontend\
 kubectl create -f .
 ```
 ## Accessing the frontend
@@ -118,6 +118,28 @@ To access the frontend, you need to forward the service to your local machine. T
 
 ```bash
 kubectl port-forward svc/ba-frontend 9001:9001
+```
+
+### Setting up an ingress controller on aks
+If you want to access the frontend from outside the cluster, you need to setup an ingress controller. The following command installs the nginx ingress controller on Azure Kubernetes Service (AKS).
+
+```bash
+NAMESPACE=ingress-basic
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+  --create-namespace \
+  --namespace $NAMESPACE \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz
+```
+
+After the ingress controller is installed, you need to create an ingress resource. The following command creates an ingress resource for the frontend.
+Make sure that the current working directory is the folder expa_frontend.
+
+```bash
+kubectl apply -f ingress_config/frontend_ingress.yml
 ```
 
 ## Generating Events
